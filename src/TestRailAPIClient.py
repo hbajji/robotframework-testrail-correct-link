@@ -37,7 +37,7 @@ class TestRailAPIClient(object):
         self._password = password
         self.run_id = run_id
 
-    def _send_post(self, uri: str, data: Dict[str, Any]) -> Union[JsonList, JsonDict]:
+    def _send_post(self, uri: str, headers: Dict[str, str] = DEFAULT_TESTRAIL_HEADERS,data: Dict[str, Any]) -> Union[JsonList, JsonDict]:
         """Perform post request to TestRail.
 
         *Args:* \n
@@ -48,7 +48,7 @@ class TestRailAPIClient(object):
             Request result in json format.
         """
         url = self._url + uri
-        response = post(url, json=data, auth=(self._user, self._password), verify=False)
+        response = post(url, json=data,headers=headers, auth=(self._user, self._password), verify=False)
         response.raise_for_status()
         return response.json()
 
@@ -260,7 +260,7 @@ class TestRailAPIClient(object):
         if description is not None:
             data['description'] = description
 
-        response = self._send_post(uri=uri, data=data)
+        response = self._send_post(uri=uri,headers=headers data=data)
         return cast(JsonDict, response)
 
     def get_sections(self, project_id: Id, suite_id: Id) -> JsonList:
